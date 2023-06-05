@@ -16,9 +16,12 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserRepository extends ServiceEntityRepository
 {
+    private $conn;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, User::class);
+        $this->conn = $this->getEntityManager()->getConnection();
     }
 
     public function save(User $entity, bool $flush = false): void
@@ -41,11 +44,16 @@ class UserRepository extends ServiceEntityRepository
 
     public function findAllUsers(): array 
     {
-        $conn = $this->getEntityManager()->getConnection();
         $query = "SELECT * FROM user";
-        $stmt = $conn->executeQuery($query);
+        $stmt = $this->conn->executeQuery($query);
         
         return $stmt->fetchAllAssociative(); 
+    }
+
+    public function deleteUser(int $id): void
+    {
+        $query = "DELETE FROM user WHERE user_id={$id}";
+        $stmt = $this->conn->executeQuery($query);
     }
 
 //    /**

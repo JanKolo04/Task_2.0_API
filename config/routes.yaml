@@ -14,3 +14,8 @@ create_user:
     path: /user
     controller: App\Controller\UsersController::createUser
     methods: POST
+
+delete_user:
+    path: /user/{id}
+    controller: App\Controller\UsersController::deleteUser
+    methods: DELETE
