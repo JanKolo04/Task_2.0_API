@@ -1,0 +1,16 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+
+
+users_list:
+    path: /user
+    controller: App\Controller\UsersController::usersList
+    methods: GET
+
+create_user:
+    path: /user
+    controller: App\Controller\UsersController::createUser
+    methods: POST
