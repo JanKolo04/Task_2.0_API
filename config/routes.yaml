@@ -5,7 +5,12 @@ controllers:
     type: attribute
 
 
-users:
-    path: /users
-    controller: App\Controller\UsersController:allUsers
+users_list:
+    path: /user
+    controller: App\Controller\UsersController::usersList
     methods: GET
+
+create_user:
+    path: /user
+    controller: App\Controller\UsersController::createUser
+    methods: POST
