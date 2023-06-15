@@ -30,18 +30,44 @@ class PlanController extends AbstractController
         // fetch all plans form database
         $plans = $planRepository->fetchAllPlans();
 
-        // check whether $plan is empty
+        // check whether $plans is empty
         if(!$plans) {
             // if is return error message
             $message = "Any plan doesn't found";
             return new JsonResponse(["message" => $message], 200, [], false);
         }
 
-        // convert data into JSON format
+        // parse data into JSON format
         $jsonData = $this->serializer->serialize($plans, 'json');
 
         // return data
         return new JsonResponse($jsonData, 200, [], true);
     }
 
+    /**
+     * showPlan() method to show plan with id = $id
+     * 
+     * @param PlanRepository $planRepository set of methods to manipulate data in database
+     * @param int $id plan_id
+     * 
+     * @Route("/plan/{id}", name="shiow_plan", methods={"GET"})
+     */
+    public function showPlan(PlanRepository $planRepository, int $id): JsonResponse
+    {   
+        // find plan with id = $id
+        $plan = $planRepository->find($id);
+
+        // check whether $plan is empty
+        if(!$plan) {
+            // return error message when $plan is empty
+            $message = "Plan have not found";
+            return new JsonResponse(["message" => $message], 200, [], false);
+        }
+
+        // parse data into JSON format
+        $jsonData = $this->serializer->serialize($plan, 'json');
+
+        // return data
+        return new JsonResponse($jsonData, 200, [], true);
+    }
 }

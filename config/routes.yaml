@@ -29,3 +29,8 @@ plan_list:
     path: /plan
     controller: App\Controller\PlanController::planList
     methods: GET
+
+show_plan:
+    path: /plan/{id}
+    controller: App\Controller\PlanController::showPlan
+    methods: GET
