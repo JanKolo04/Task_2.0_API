@@ -41,6 +41,7 @@ class UsersController extends AbstractController
      * 
      * @param UserRepository $userRepository set of methods to manipulating data in database 
      * @param int $id user_id
+     * 
      * @Route("/user/{id}", name="show_user", methods={"GET"})
      */
     public function showUser(UserRepository $userRepository, int $id): JsonResponse
