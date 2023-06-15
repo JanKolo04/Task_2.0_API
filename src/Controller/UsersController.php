@@ -30,13 +30,17 @@ class UsersController extends AbstractController
         // fetch all users from 'user' table
         $users = $userRepository->findAllUsers();
         
-        // return data in JSON format
+        // parse data into JSON format
         $jsonData = $this->serializer->serialize($users, 'json');
-
+        // return data
         return new JsonResponse($jsonData, 200, [], true);
     }
 
     /**
+     * showUser() method to show user by id
+     * 
+     * @param UserRepository $userRepository set of methods to manipulating data in database 
+     * @param int $id user_id
      * 
      * @Route("/user/{id}", name="show_user", methods={"GET"})
      */
@@ -51,9 +55,9 @@ class UsersController extends AbstractController
             return new JsonResponse(["message" => $message], 200, [], false);
         }
 
-        // return data in JSON format
+        // parse data into JSON format
         $jsonData = $this->serializer->serialize($findUser, 'json');
-
+        // return data
         return new JsonResponse($jsonData, 200, [], true);
     }
 
