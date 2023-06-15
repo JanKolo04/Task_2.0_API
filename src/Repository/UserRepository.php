@@ -47,7 +47,7 @@ class UserRepository extends ServiceEntityRepository
         $query = "SELECT * FROM user";
         $stmt = $this->conn->executeQuery($query);
         
-        return $stmt->fetchAllAssociative(); 
+        return $stmt->fetchAllAssociative();
     }
 
     public function deleteUser(int $id): void

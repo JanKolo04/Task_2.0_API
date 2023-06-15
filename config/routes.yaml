@@ -10,6 +10,11 @@ users_list:
     controller: App\Controller\UsersController::usersList
     methods: GET
 
+show_user:
+    path: /user/{id}
+    controller: App\Controller\UsersController::showUser
+    methods: GET
+
 create_user:
     path: /user
     controller: App\Controller\UsersController::createUser
