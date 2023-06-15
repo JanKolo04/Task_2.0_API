@@ -50,6 +50,11 @@ class PlanRepository extends ServiceEntityRepository
         return $stmt->fetchAllAssociative();
     }
 
+    public function deletePlan(int $id): void
+    {
+        $sql = "DELETE FROM plan WHERE plan_id={$id}";
+        $stmt = $this->conn->executeQuery($sql);
+    }
 
 //    /**
 //     * @return Plan[] Returns an array of Plan objects

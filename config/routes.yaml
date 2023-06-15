@@ -34,3 +34,13 @@ show_plan:
     path: /plan/{id}
     controller: App\Controller\PlanController::showPlan
     methods: GET
+
+create_plan:
+    path: /plan
+    controller: App\Controller\PlanController::createPlan
+    methods: POST
+
+delete_plan:
+    path: /plan/{id}
+    controller: App\Controller\PlanController::deletePlan
+    methods: DELETE
