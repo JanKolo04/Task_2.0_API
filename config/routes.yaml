@@ -10,7 +10,37 @@ users_list:
     controller: App\Controller\UsersController::usersList
     methods: GET
 
+show_user:
+    path: /user/{id}
+    controller: App\Controller\UsersController::showUser
+    methods: GET
+
 create_user:
     path: /user
     controller: App\Controller\UsersController::createUser
     methods: POST
+
+delete_user:
+    path: /user/{id}
+    controller: App\Controller\UsersController::deleteUser
+    methods: DELETE
+
+plan_list:
+    path: /plan
+    controller: App\Controller\PlanController::planList
+    methods: GET
+
+show_plan:
+    path: /plan/{id}
+    controller: App\Controller\PlanController::showPlan
+    methods: GET
+
+create_plan:
+    path: /plan
+    controller: App\Controller\PlanController::createPlan
+    methods: POST
+
+delete_plan:
+    path: /plan/{id}
+    controller: App\Controller\PlanController::deletePlan
+    methods: DELETE
