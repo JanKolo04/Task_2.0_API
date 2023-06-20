@@ -7,9 +7,11 @@ use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Controller\UsersController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use App\Form\Type\UserType;
+use Symfony\Component\HttpFoundation\Request;
+
 
 class UsersController extends AbstractController 
 {   
@@ -68,24 +70,48 @@ class UsersController extends AbstractController
      * 
      * @Route("/user", name="create_user", methods={"POST"})
      */
-    public function createUser(EntityManagerInterface $entityManager): JsonResponse 
+    public function createUser(EntityManagerInterface $entityManager, Request $request): JsonResponse 
     {   
-        // create object 'User' and save new user data
-        $user = new User();
-        $user->setName('Bolek');
-        $user->setSurname('Kelner');
-        $user->setEmail('bolek@gmail.com');
-        $user->setPassword('admin123');
-        $user->setAvatar('#765912');
+        // create try to avoid any exeptions
+        try {
+            // create object 'User' and save new user data
+            
+            $user = new User();
+            /*
+            $user->setName('Bolek');
+            $user->setSurname('Kelner');
+            $user->setEmail('bolek@gmail.com');
+            $user->setPassword('admin123');
+            $user->setAvatar('#765911232');
+            */
 
-        // this tell Doctrine to manage with 'User' object
-        $entityManager->persist($user);
-        // method to execute 'INSERT' method to save data into database
-        $entityManager->flush();
+            // create form
+            $form = $this->createForm(UserType::class, $user);
+            $form->handleRequest($request);
+            
+            //submit data from form by POST method
+            $form->submit($request->request->all());
 
-        // return data in JSON format
-        $message = "User added correctlly with id ".$user->getUserId();
-        return new JsonResponse(["message" => $message], 200, [], false);
+            // check if form is submitted and have correct data
+            if($form->isValid()) {
+                // save data into user object
+                $task = $form->getData();
+                
+                // this tell Doctrine to manage with 'User' object
+                $entityManager->persist($user);
+                // method to execute 'INSERT' method to save data into database
+                $entityManager->flush();
+
+                // return data in JSON format
+                $message = "User added correctlly with id ".$user->getUserId();
+                return new JsonResponse(["message" => $message], 200, [], false);
+            }
+        }
+        catch(\Exception $e) {
+            // return error message
+            $message = $e->getMessage();
+            return new JsonResponse(["message" => $message], 200, [], false);
+        }
     }
 
     /**
