@@ -18,7 +18,7 @@
             $builder->add("email", EmailType::class, ['attr' => ['maxlength' => 255]]);
             $builder->add("password", PasswordType::class, ['attr' => ['maxlength' => 255]]);
             $builder->add("avatar", TextType::class, ['attr' => ['maxlength' => 7]]);
-            $builder->add("send", SubmitType::class);
+            $builder->add("submit", SubmitType::class);
         }
     }
 

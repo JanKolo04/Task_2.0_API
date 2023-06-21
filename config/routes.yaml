@@ -20,6 +20,11 @@ create_user:
     controller: App\Controller\UsersController::createUser
     methods: POST
 
+edit_user:
+    path: /user/{id}
+    controller: App\Controller\UsersController::editUser
+    methods: PATCH
+
 delete_user:
     path: /user/{id}
     controller: App\Controller\UsersController::deleteUser
