@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Form\Type\PlanType;
+use Symfony\Component\HttpFoundation\Request;
 
 class PlanController extends AbstractController
 {
@@ -93,6 +95,55 @@ class PlanController extends AbstractController
         // return message
         $message = "Plan added correcttly with id ".$plan->getPlanId();
         return new JsonResponse(['message' => $message], 200, [], false);
+    }
+
+    /**
+     * edtiPlan() method to edit plan data
+     * 
+     * @param PlanRepository $planRepository set of methods to manipulate data on database
+     * @param int $id palan_id
+     * @return JsonResponse
+     * 
+     * @Route("/plan/{id}", name="edit_plan", methods={"PATCH"})
+     */
+    public function editPlan(EntityManagerInterface $entityManager, PlanRepository $planRepository, Request $request, int $id): JsonResponse
+    {
+        // find plan by id
+        $plan = $planRepository->find($id);
+        
+        // check if $plan is empty
+        if(!$plan) {
+            // if is return message
+            $message = "Plan not found with id ".$id;
+            return new JsonResponse(["message" => $message], 200, [], false);
+        }
+
+        try {
+            // create Plan form
+            $form = $this->createForm(PlanType::class, $plan);
+            // handle incomming request
+            $form->handleRequest($request);
+            // submit form
+            // this function is only for test on postman
+            $form->submit($request->request->all());
+
+            // check whether form is submitted and is valid
+            if($form->isSubmitted() && $form->isValid()) {
+                // tell Doctrine to save Plan
+                $entityManager->persist($plan);
+                // run INSERT method
+                $entityManager->flush();
+
+                // return plan with new data in JSON format
+                $planJsonFormat = $this->serializer->serialize($plan, 'json');
+                return new JsonResponse($planJsonFormat, 200, [], true);
+            }
+        }
+        catch(\Exception $e) {
+            // return exception message
+            $message = $e->getMessage();
+            return new JsonResponse(["message" => $message], 200, [], false);
+        }
     }
 
     /**

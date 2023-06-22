@@ -52,7 +52,7 @@ class PlanRepository extends ServiceEntityRepository
 
     public function deletePlan(int $id): void
     {
-        $sql = "DELETE FROM plan WHERE plan_id={$id}";
+        $sql = "DELETE FROM plan WHERE planId={$id}";
         $stmt = $this->conn->executeQuery($sql);
     }
 

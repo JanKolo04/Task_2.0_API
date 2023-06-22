@@ -11,17 +11,17 @@ class Plan
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $plan_id = null;
+    private ?int $planId = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
     #[ORM\Column(length: 7)]
-    private ?string $bg_color = null;
+    private ?string $bgColor = null;
 
     public function getPlanId(): ?int
     {
-        return $this->plan_id;
+        return $this->planId;
     }
 
     public function getName(): ?string
@@ -38,12 +38,12 @@ class Plan
 
     public function getBgColor(): ?string
     {
-        return $this->bg_color;
+        return $this->bgColor;
     }
 
-    public function setBgColor(string $bg_color): self
+    public function setBgColor(string $bgColor): self
     {
-        $this->bg_color = $bg_color;
+        $this->bgColor = $bgColor;
 
         return $this;
     }

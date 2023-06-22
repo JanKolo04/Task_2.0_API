@@ -40,6 +40,11 @@ create_plan:
     controller: App\Controller\PlanController::createPlan
     methods: POST
 
+edit_plan:
+    path: /plan/{id}
+    controller: App\Controller\PlanController::editPlan
+    methods: PATCH
+
 delete_plan:
     path: /plan/{id}
     controller: App\Controller\PlanController::deletePlan
