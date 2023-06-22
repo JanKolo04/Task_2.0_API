@@ -124,28 +124,32 @@ class UsersController extends AbstractController
             return new JsonResponse(['message' => $message], 200, [], false);
         }
 
-        // create form with User
-        $form = $this->createForm(UserType::class, $user);
-        // handle incomming request
-        $form->handleRequest($request);
-        // submit and proccess data form
-        // force submit and this is only for dev and testing on postman
-        $form->submit($request->request->all()); 
+        try {
+            // create form with User
+            $form = $this->createForm(UserType::class, $user);
+            // handle incomming request
+            $form->handleRequest($request);
+            // submit and proccess data form
+            // force submit and this is only for dev and testing on postman
+            $form->submit($request->request->all()); 
 
-        // check if is submitted and valid
-        if($form->isSubmitted() && $form->isValid()) {                
-            // this tell Doctrine to manage with 'User' object
-            $entityManager->persist($user);
-            // method to execute 'INSERT' method to save data into database
-            $entityManager->flush();
+            // check if is submitted and valid
+            if($form->isSubmitted() && $form->isValid()) {                
+                // this tell Doctrine to manage with 'User' object
+                $entityManager->persist($user);
+                // method to execute 'INSERT' method to save data into database
+                $entityManager->flush();
 
-            // parse User object into JSON format
-            $jsonData = $this->serializer->serialize($user, 'json');
-            // return data
-            return new JsonResponse($jsonData, 200, [], true);
+                // parse User object into JSON format
+                $jsonData = $this->serializer->serialize($user, 'json');
+                // return data
+                return new JsonResponse($jsonData, 200, [], true);
+            }
         }
-
-        return new JsonResponse(['message' => 'Nothing'], 200, [], false);
+        catch(\Exception $e) {
+            $message = "User not found with id ".$id;
+            return new JsonResponse(['message' => $message], 200, [], false);
+        }
     }
 
     /**
