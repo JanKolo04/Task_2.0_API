@@ -11,12 +11,41 @@
     use Symfony\Component\Serializer\SerializerInterface;
     use Symfony\Component\HttpFoundation\Request;
 
-    class PlanUserController extends AbstractController
+    class PlanUsersController extends AbstractController
     {
         public $serializer = null;
 
         public function __construct(SerializerInterface $serializer) {
             $this->serializer = $serializer;
+        }
+
+        /**
+         * usersList() method to get all users in plan
+         * 
+         * @param PlanUsersRepository $planUsersRepository set of methods for database
+         * @param int $plan_id plan id
+         * 
+         * @return JsonResponse
+         * 
+         * @Route("/plan/{plan_id}/users", name="users_in_plan", methods={"GET"})
+         */
+        public function usersList(PlanUsersRepository $planUsersRepository, int $plan_id): JsonResponse
+        {
+            // fetch all plans form database
+            $usersInPlan = $planUsersRepository->fetchAllUsers($plan_id);
+
+            // check whether $plans is empty
+            if(!$usersInPlan) {
+                // if is return error message
+                $message = "Any user in plan with id {$plan_id} not found";
+                return new JsonResponse(["message" => $message], 200, [], false);
+            }
+
+            // parse usersInPlanJsonFormat into JSON format
+            $usersInPlanJsonFormat = $this->serializer->serialize($usersInPlan, 'json');
+
+            // return data
+            return new JsonResponse($usersInPlanJsonFormat, 200, [], true);
         }
 
         /**
