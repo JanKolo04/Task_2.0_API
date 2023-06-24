@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Plan;
 
 use App\Entity\Plan;
 use App\Repository\PlanRepository;
@@ -68,7 +68,6 @@ class PlanController extends AbstractController
 
         // parse data into JSON format
         $jsonData = $this->serializer->serialize($plan, 'json');
-
         // return data
         return new JsonResponse($jsonData, 200, [], true);
     }
