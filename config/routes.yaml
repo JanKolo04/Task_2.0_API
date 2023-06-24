@@ -25,22 +25,35 @@ delete_user:
     controller: App\Controller\UsersController::deleteUser
     methods: DELETE
 
+# plan routes
 plan_list:
     path: /plan
-    controller: App\Controller\PlanController::planList
+    controller: App\Controller\Plan\PlanController::planList
     methods: GET
 
 show_plan:
     path: /plan/{id}
-    controller: App\Controller\PlanController::showPlan
+    controller: App\Controller\Plan\PlanController::showPlan
     methods: GET
 
 create_plan:
     path: /plan
-    controller: App\Controller\PlanController::createPlan
+    controller: App\Controller\Plan\PlanController::createPlan
     methods: POST
+
+edit_plan:
+    path: /plan/{id}
+    controller: App\Controller\Plan\PlanController::editPlan
+    methods: PATCH
 
 delete_plan:
     path: /plan/{id}
-    controller: App\Controller\PlanController::deletePlan
+    controller: App\Controller\Plan\PlanController::deletePlan
     methods: DELETE
+
+# users plan routes
+create_user_plan:
+    path: /plan/{plan_id}/users/{user_id}
+    controller: App\Controller\Plan\PlanUserController::addUser
+    methods: POST
+

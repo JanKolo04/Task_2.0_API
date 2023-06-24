@@ -2,29 +2,27 @@
 
 namespace App\Repository;
 
-use App\Entity\Plan;
+use App\Entity\PlanUsers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Plan>
+ * @extends ServiceEntityRepository<PlanUsers>
  *
- * @method Plan|null find($id, $lockMode = null, $lockVersion = null)
- * @method Plan|null findOneBy(array $criteria, array $orderBy = null)
- * @method Plan[]    findAll()
- * @method Plan[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method PlanUsers|null find($id, $lockMode = null, $lockVersion = null)
+ * @method PlanUsers|null findOneBy(array $criteria, array $orderBy = null)
+ * @method PlanUsers[]    findAll()
+ * @method PlanUsers[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PlanRepository extends ServiceEntityRepository
+class PlanUsersRepository extends ServiceEntityRepository
 {
-    private $conn;
-
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Plan::class);
+        parent::__construct($registry, PlanUsers::class);
         $this->conn = $this->getEntityManager()->getConnection();
     }
 
-    public function save(Plan $entity, bool $flush = false): void
+    public function save(PlanUsers $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -33,7 +31,7 @@ class PlanRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Plan $entity, bool $flush = false): void
+    public function remove(PlanUsers $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -42,22 +40,19 @@ class PlanRepository extends ServiceEntityRepository
         }
     }
 
-    public function fetchAllPlans(): ?array
-    {   
-        $sql = "SELECT * FROM plan";
-        $stmt = $this->conn->executeQuery($sql);
-
-        return $stmt->fetchAllAssociative();
-    }
-
-    public function deletePlan(int $id): void
+    public function findUser($id): ?array
     {
-        $sql = "DELETE FROM plan WHERE planId={$id}";
+        $sql = "SELECT user_id FROM user WHERE user_id={$id}";
         $stmt = $this->conn->executeQuery($sql);
+        
+        if($stmt->rowCount() > 0) {
+            return $stmt->fetchAllAssociative();
+        }
+        return null;
     }
 
 //    /**
-//     * @return Plan[] Returns an array of Plan objects
+//     * @return PlanUsers[] Returns an array of PlanUsers objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -71,7 +66,7 @@ class PlanRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Plan
+//    public function findOneBySomeField($value): ?PlanUsers
 //    {
 //        return $this->createQueryBuilder('p')
 //            ->andWhere('p.exampleField = :val')
