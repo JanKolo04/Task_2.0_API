@@ -78,6 +78,12 @@ class PlanUsersRepository extends ServiceEntityRepository
         return null;
     }
 
+    public function deleteUserFromPlan(int $plan_id, int $user_id): void
+    {
+        $sql = "DELETE FROM user_in_plan WHERE plan_id={$plan_id} AND user_id={$user_id}";
+        $stmt = $this->conn->executeQuery($sql);
+    }
+
 //    /**
 //     * @return PlanUsers[] Returns an array of PlanUsers objects
 //     */

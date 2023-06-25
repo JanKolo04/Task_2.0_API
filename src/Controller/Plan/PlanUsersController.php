@@ -116,5 +116,40 @@
             // return data
             return new JsonResponse($planUsersJson, 200, [], true);   
         }
+
+        /**
+         * deleteUser() method to delete user from plan
+         * 
+         * @param PlanUsersHelper $planUsersHelper set of methods to make main code cleaner
+         * @param PlaUsersRepository $planUsersRepository set of methods to action with database
+         * @param int $plan_id plan id
+         * @param int $user_id user id
+         * 
+         * @return JsonResponse
+         * 
+         * @Route("/plan/{plan_id}/users/{user_id}", name="delete_user_from_plan", methods={"DELETE"})
+         */
+        public function deleteUser(PlanUsersHelper $planUsersHelper, PlanUsersRepository $planUsersRepository, int $plan_id, int $user_id): JsonResponse
+        {
+            // try to find plan with id $plan_id
+            $plan = $planUsersHelper->checkPlanExist($plan_id);
+            // try to find user with id $user_id
+            $user = $planUsersHelper->checkUserExistInPlan($plan_id, $user_id);
+
+            // if an function return string return error message
+            if(gettype($plan) == 'string') {
+                return new JsonResponse(['message' => $plan], 200, [], false);
+            }
+            else if(gettype($user) == 'string') {
+                return new JsonResponse(['message' => $user], 200, [], false);
+            }
+
+            // delete user from plan
+            $planUsersRepository->deleteUserFromPlan($plan_id, $user_id);
+
+            // send message that user deleted correctlly
+            $message = "User deleted correctlly with id ".$user_id." from plan with id ".$plan_id;
+            return new JsonResponse(['message' => $message], 200, [], false);
+        }
     }
 ?>

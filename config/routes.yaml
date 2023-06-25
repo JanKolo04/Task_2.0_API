@@ -67,3 +67,8 @@ create_user_plan:
     controller: App\Controller\Plan\PlanUsersController::addUser
     methods: POST
 
+delete_user_from_plan:
+    path: /plan/{plan_id}/users/{user_id}
+    controller: App\Controller\Plan\PlanUsersController::deleteUser
+    methods: DELETE    
+
