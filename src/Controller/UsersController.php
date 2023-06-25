@@ -7,9 +7,11 @@ use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Controller\UsersController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use App\Form\Type\UserType;
+use Symfony\Component\HttpFoundation\Request;
+
 
 class UsersController extends AbstractController 
 {   
@@ -68,24 +70,86 @@ class UsersController extends AbstractController
      * 
      * @Route("/user", name="create_user", methods={"POST"})
      */
-    public function createUser(EntityManagerInterface $entityManager): JsonResponse 
+    public function createUser(EntityManagerInterface $entityManager, Request $request): JsonResponse 
     {   
-        // create object 'User' and save new user data
-        $user = new User();
-        $user->setName('Bolek');
-        $user->setSurname('Kelner');
-        $user->setEmail('bolek@gmail.com');
-        $user->setPassword('admin123');
-        $user->setAvatar('#765912');
+        // create try to avoid any exeptions
+        try {
+            // create object 'User' and save new user data
+            $user = new User();
 
-        // this tell Doctrine to manage with 'User' object
-        $entityManager->persist($user);
-        // method to execute 'INSERT' method to save data into database
-        $entityManager->flush();
+            // create form with User
+            $form = $this->createForm(UserType::class, $user);
+            // handle incomming request
+            $form->handleRequest($request);
+            // submit and proccess data form
+            // force submit and this is only for dev and testing on postman
+            $form->submit($request->request->all());
 
-        // return data in JSON format
-        $message = "User added correctlly with id ".$user->getUserId();
-        return new JsonResponse(["message" => $message], 200, [], false);
+            // check if form have correct data
+            if($form->isSubmitted() && $form->isValid()) {
+                // this tell Doctrine to manage with 'User' object
+                $entityManager->persist($user);
+                // method to execute 'INSERT' method to save data into database
+                $entityManager->flush();
+
+                // parse User object into JSON format
+                $jsonData = $this->serializer->serialize($user, 'json');
+                // return data
+                return new JsonResponse($jsonData, 200, [], true);
+            }
+        }
+        catch(\Exception $e) {
+            // return error message
+            $message = $e->getMessage();
+            return new JsonResponse(["message" => $message], 200, [], false);
+        }
+    }
+
+    /**
+     * edituser() metod to edit user data
+     * 
+     * @param UserRepository $userRepository set of methods which operate on database
+     * @param int $id user_id
+     * @return JsonResponse
+     * 
+     * @Route("/user/{id}", name="edit_user", methods={"PATCH"})
+     */
+    public function editUser(UserRepository $userRepository, EntityManagerInterface $entityManager, Request $request, int $id): JsonResponse
+    {
+        // try to find user by id
+        $user = $userRepository->find($id);
+
+        if(!$user) {
+            $message = "User not found with id ".$id;
+            return new JsonResponse(['message' => $message], 200, [], false);
+        }
+
+        try {
+            // create form with User
+            $form = $this->createForm(UserType::class, $user);
+            // handle incomming request
+            $form->handleRequest($request);
+            // submit and proccess data form
+            // force submit and this is only for dev and testing on postman
+            $form->submit($request->request->all()); 
+
+            // check if is submitted and valid
+            if($form->isSubmitted() && $form->isValid()) {                
+                // this tell Doctrine to manage with 'User' object
+                $entityManager->persist($user);
+                // method to execute 'INSERT' method to save data into database
+                $entityManager->flush();
+
+                // parse User object into JSON format
+                $jsonData = $this->serializer->serialize($user, 'json');
+                // return data
+                return new JsonResponse($jsonData, 200, [], true);
+            }
+        }
+        catch(\Exception $e) {
+            $message = "User not found with id ".$id;
+            return new JsonResponse(['message' => $message], 200, [], false);
+        }
     }
 
     /**
