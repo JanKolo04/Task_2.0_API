@@ -53,13 +53,27 @@ class PlanUsersRepository extends ServiceEntityRepository
         return null;
     }
 
-    public function findUser($id): ?array
+    public function findUserInPlan(int $plan_id, int $user_id): ?array
+    {
+        $sql = "SELECT user.* FROM user INNER JOIN user_in_plan
+                ON user.user_id=user_in_plan.user_id 
+                WHERE user_in_plan.plan_id={$plan_id} AND 
+                user_in_plan.user_id={$user_id}";
+        $stmt = $this->conn->executeQuery($sql);
+
+        if($stmt->rowCount() > 0) {
+            return $stmt->fetchAllAssociative();
+        }
+        return null;
+    }
+
+    public function findUser($id): ?bool
     {
         $sql = "SELECT user_id FROM user WHERE user_id={$id}";
         $stmt = $this->conn->executeQuery($sql);
         
         if($stmt->rowCount() > 0) {
-            return $stmt->fetchAllAssociative();
+            return True;
         }
         return null;
     }

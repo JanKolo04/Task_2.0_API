@@ -4,6 +4,7 @@
 
     use App\Service\Plan\PlanUsersHelper;
     use App\Repository\PlanUsersRepository;
+    use App\Repository\PlanRepository;
     use Symfony\Component\Routing\Annotation\Route;
     use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
     use Doctrine\ORM\EntityManagerInterface;
@@ -27,7 +28,7 @@
          * 
          * @return JsonResponse
          * 
-         * @Route("/plan/{plan_id}/users", name="users_in_plan", methods={"GET"})
+         * @Route("/plan/{plan_id}/users", name="list_of_users_in_plan", methods={"GET"})
          */
         public function usersList(PlanUsersRepository $planUsersRepository, int $plan_id): JsonResponse
         {
@@ -49,6 +50,39 @@
         }
 
         /**
+         * showUser() method to show one user in plan
+         * 
+         * @param PlanUsersHelper set of methods to make main code clean
+         * @param int $plan_id plan id
+         * @param int $user_id user id
+         * 
+         * @return JsonResponse
+         * 
+         * @Route("/plan/{plan_id}/users/{user_id}", name="show_user_in_plan", methods={"GET"})
+         */
+        public function showUser(PlanUsersHelper $planUsersHelper, int $plan_id, int $user_id): JsonResponse
+        {   
+            // try to find plan with id $plan_id
+            $plan = $planUsersHelper->checkPlanExist($plan_id);
+            // try to find user with id $user_id
+            $user = $planUsersHelper->checkUserExistInPlan($plan_id, $user_id);
+
+            // if an function return string return error message
+            if(gettype($plan) == 'string') {
+                return new JsonResponse(['message' => $plan], 200, [], false);
+            }
+            else if(gettype($user) == 'string') {
+                return new JsonResponse(['message' => $user], 200, [], false);
+            }
+
+            // parse $user object into JSON format
+            $userInJsonFormat = $this->serializer->serialize($user, 'json');
+            // return data
+            return new JsonResponse($userInJsonFormat, 200, [], true);             
+        }
+
+
+        /**
          * addUser() method to add user into plan
          * 
          * @param PlanUsersHelper $planUsersHelper set of methods to make main controller smaller
@@ -62,33 +96,25 @@
          */
         public function addUser(PlanUsersHelper $planUsersHelper, EntityManagerInterface $entityManager, int $plan_id, int $user_id): JsonResponse
         {
-            try {
-                // run methods to check exist plan and user
-                $planExist = $planUsersHelper->checkPlanExist($plan_id);
-                $userExist = $planUsersHelper->checkUserExist($user_id);
+            // run methods to check exist plan and user
+            $checkPlanExist = $planUsersHelper->checkPlanExist($plan_id);
+            $checkUserExist = $planUsersHelper->checkUserExist($user_id);
 
-                // check whether methods above not returns null
-                if($planExist != null) {
-                    return new JsonResponse(['message' => $planExist], 200, [], false);
-                }
-                else if($userExist != null) {
-                    return new JsonResponse(['message' => $userExist], 200, [], false);
-                }
-
-                // add user into plan
-                $planUsers = $planUsersHelper->addUserIntoPlan($entityManager, $user_id, $plan_id);
-
-                // parse PlanUsers object into JSON format
-                $planUsersJson = $this->serializer->serialize($planUsers, 'json');
-                // return data
-                return new JsonResponse($planUsersJson, 200, [], true);
-
+            // check whether methods above not returns null
+            if(gettype($checkPlanExist) == 'string') {
+                return new JsonResponse(['message' => $checkPlanExist], 200, [], false);
             }
-            catch(\Exception $e) {
-                // return exception message
-                $message = $e->getMessage();
-                return new JsonResponse(["message" => $message], 200, [], false);
+            else if(gettype($checkUserExist) == 'string') {
+                return new JsonResponse(['message' => $checkUserExist], 200, [], false);
             }
+
+            // add user into plan
+            $planUsers = $planUsersHelper->addUserIntoPlan($entityManager, $user_id, $plan_id);
+
+            // parse PlanUsers object into JSON format
+            $planUsersJson = $this->serializer->serialize($planUsers, 'json');
+            // return data
+            return new JsonResponse($planUsersJson, 200, [], true);   
         }
     }
 ?>
