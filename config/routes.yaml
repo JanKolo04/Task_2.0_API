@@ -52,8 +52,23 @@ delete_plan:
     methods: DELETE
 
 # users plan routes
+list_of_users_in_plan:
+    path: /plan/{plan_id}/users
+    controller: App\Controller\Plan\PlanUsersController::usersList
+    methods: GET
+
+show_user_in_plan:
+    path: /plan/{plan_id}/users/{user_id}
+    controller: App\Controller\Plan\PlanUsersController::showUser
+    methods: GET
+
 create_user_plan:
     path: /plan/{plan_id}/users/{user_id}
-    controller: App\Controller\Plan\PlanUserController::addUser
+    controller: App\Controller\Plan\PlanUsersController::addUser
     methods: POST
+
+delete_user_from_plan:
+    path: /plan/{plan_id}/users/{user_id}
+    controller: App\Controller\Plan\PlanUsersController::deleteUser
+    methods: DELETE    
 

@@ -23,9 +23,9 @@
          * 
          * @param int $plan_id plan id
          * 
-         * @return string|null
+         * @return string|bool
          */
-        public function checkPlanExist(int $plan_id): ?string
+        public function checkPlanExist(int $plan_id): string|bool
         {   
             // find plan by id
             $plan = $this->planRepository->find($plan_id);
@@ -36,7 +36,7 @@
                 return $message;
             }
 
-            return null;
+            return True;
         }
 
         /**
@@ -44,9 +44,9 @@
          * 
          * @param int $user_id user id
          * 
-         * @return string|null
+         * @return string|bool
          */
-        public function checkUserExist(int $user_id): ?string
+        public function checkUserExist(int $user_id): string|bool
         {
             // find user by id
             $user = $this->planUsersRepository->findUser($user_id);
@@ -57,7 +57,29 @@
                 return $message;
             }
 
-            return null;
+            return True;
+        }
+
+        /**
+         * checkUserExistInPlan() method to check whether user exist in plan
+         * 
+         * @param int $plan_id plan id
+         * @param int $user_id user id
+         * 
+         * @return string|array
+         */
+        public function checkUserExistInPlan(int $plan_id, int $user_id): string|array
+        {
+            // find user by id
+            $user = $this->planUsersRepository->findUserInPlan($plan_id, $user_id);
+            // check if $user is empty
+            if(!$user) {
+                // if is return message
+                $message = "User not find with id ".$user_id." in plan with id ".$plan_id;
+                return $message;
+            }
+
+            return $user;
         }
 
         /**
