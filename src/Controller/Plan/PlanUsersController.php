@@ -57,9 +57,8 @@
          * @param int $user_id user id
          * 
          * @return JsonResponse
-         * 
-         * @Route("/plan/{plan_id}/users/{user_id}", name="show_user_in_plan", methods={"GET"})
          */
+        #[Route("/plan/{plan_id}/users/{user_id}", name: "show_user_in_plan", methods: ["GET"])]
         public function showUser(PlanUsersHelper $planUsersHelper, int $plan_id, int $user_id): JsonResponse
         {   
             // try to find plan with id $plan_id
@@ -91,9 +90,8 @@
          * @param int $user_id user id
          * 
          * @return JsonResponse
-         * 
-         * @Route("/plan/{plan_id}/users/{user_id}", name="create_user_plan", methods={"POST"})
          */
+        #[Route("/plan/{plan_id}/users/{user_id}", name: "create_user_plan", methods: ["POST"])]
         public function addUser(PlanUsersHelper $planUsersHelper, EntityManagerInterface $entityManager, int $plan_id, int $user_id): JsonResponse
         {
             // run methods to check exist plan and user
@@ -126,9 +124,8 @@
          * @param int $user_id user id
          * 
          * @return JsonResponse
-         * 
-         * @Route("/plan/{plan_id}/users/{user_id}", name="delete_user_from_plan", methods={"DELETE"})
          */
+        #[Route("/plan/{plan_id}/users/{user_id}", name: "delete_user_from_plan", methods: ["DELETE"])]
         public function deleteUser(PlanUsersHelper $planUsersHelper, PlanUsersRepository $planUsersRepository, int $plan_id, int $user_id): JsonResponse
         {
             // try to find plan with id $plan_id

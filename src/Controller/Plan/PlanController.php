@@ -25,8 +25,9 @@ class PlanController extends AbstractController
      * 
      * @param PlanRepository $planRepository set of methods to manipulate data in database
      * 
-     * @Route("/plan", name="plan_list", methods={"GET"})
+     * @return JsonResponse
      */
+    #[Route("/plan", name: "plan_list", methods: ["GET"])]
     public function planList(PlanRepository $planRepository): JsonResponse
     {
         // fetch all plans form database
@@ -47,17 +48,18 @@ class PlanController extends AbstractController
     }
 
     /**
-     * showPlan() method to show plan with id = $id
+     * showPlan() method to show plan with id = $plan_id
      * 
      * @param PlanRepository $planRepository set of methods to manipulate data in database
-     * @param int $id plan_id
+     * @param int $plan_id plan_id
      * 
-     * @Route("/plan/{id}", name="shiow_plan", methods={"GET"})
+     * @return JsonResponse
      */
-    public function showPlan(PlanRepository $planRepository, int $id): JsonResponse
+    #[Route("/plan/{plan_id}", name: "show_plan", methods: ["GET"])]
+    public function showPlan(PlanRepository $planRepository, int $plan_id): JsonResponse
     {   
-        // find plan with id = $id
-        $plan = $planRepository->find($id);
+        // find plan with id = $plan_id
+        $plan = $planRepository->find($plan_id);
 
         // check whether $plan is empty
         if(!$plan) {
@@ -77,8 +79,9 @@ class PlanController extends AbstractController
      * 
      * @param EntityManagerInterface $entityManager object to saving data into database
      * 
-     * @Route("/plan", name="create_plan", methods={"POST"})
+     * @return JsonResponse
      */
+    #[Route("/plan", name: "create_plan", methods: ["POST"])]
     public function createPlan(EntityManagerInterface $entityManager): JsonResponse
     {
         // create object 'Plan' add data
@@ -100,20 +103,20 @@ class PlanController extends AbstractController
      * edtiPlan() method to edit plan data
      * 
      * @param PlanRepository $planRepository set of methods to manipulate data on database
-     * @param int $id palan_id
-     * @return JsonResponse
+     * @param int $plan_id palan_id
      * 
-     * @Route("/plan/{id}", name="edit_plan", methods={"PATCH"})
+     * @return JsonResponse
      */
-    public function editPlan(EntityManagerInterface $entityManager, PlanRepository $planRepository, Request $request, int $id): JsonResponse
+    #[Route("/plan/{plan_id}", name: "edit_plan", methods: ["PATCH"])]
+    public function editPlan(EntityManagerInterface $entityManager, PlanRepository $planRepository, Request $request, int $plan_id): JsonResponse
     {
         // find plan by id
-        $plan = $planRepository->find($id);
+        $plan = $planRepository->find($plan_id);
         
         // check if $plan is empty
         if(!$plan) {
             // if is return message
-            $message = "Plan not found with id ".$id;
+            $message = "Plan not found with id ".$plan_id;
             return new JsonResponse(["message" => $message], 200, [], false);
         }
 
@@ -149,27 +152,28 @@ class PlanController extends AbstractController
      * deletePlan() method to delete plan by id
      * 
      * @param PlanRepository $planRepository set of methods to manipulate data on database
-     * @param int $id palan_id
+     * @param int $plan_id palan_id
      * 
-     * @Route("/plan/{$id}", name="delete_plan", methods={"DELETE"})
+     * @return JsonResponse
      */
-    public function deletePlan(PlanRepository $planRepository, int $id): JsonResponse
+    #[Route("/plan/{plan_id}", name: "delete_plan", methods: ["DELETE"])]
+    public function deletePlan(PlanRepository $planRepository, int $plan_id): JsonResponse
     {   
         // try to find plan by id
-        $plan = $planRepository->find($id);
+        $plan = $planRepository->find($plan_id);
         
         // check whether $plan is empty
         if(!$plan) {
             // if is return error message
-            $message = "Plan have not found with id ".$id;
+            $message = "Plan have not found with id ".$plan_id;
             return new JsonResponse(['message' => $message], 200, [], false);
         }
 
         // delete plan
-        $delete = $planRepository->deletePlan($id);
+        $delete = $planRepository->deletePlan($plan_id);
 
         // return message
-        $message = "Plan deleted correcttly with id ".$id;
+        $message = "Plan deleted correcttly with id ".$plan_id;
         return new JsonResponse(['message' => $message], 200, [], false);
     }
 }
