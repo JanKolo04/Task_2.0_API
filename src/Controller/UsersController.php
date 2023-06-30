@@ -25,8 +25,9 @@ class UsersController extends AbstractController
      * 
      * @param UserRepository $userRepository set of methods to manipulating data in database
      * 
-     * @Route("/user", name="users_list", methods={"GET"})
+     * @return JsonResponse
      */
+    #[Route("/user", name: "users_list", methods: ["GET"])]
     public function usersList(UserRepository $userRepository): JsonResponse 
     {
         // fetch all users from 'user' table
@@ -42,18 +43,19 @@ class UsersController extends AbstractController
      * showUser() method to show user by id
      * 
      * @param UserRepository $userRepository set of methods to manipulating data in database 
-     * @param int $id user_id
+     * @param int $user_id user_id
      * 
-     * @Route("/user/{id}", name="show_user", methods={"GET"})
+     * @return JsonResponse
      */
-    public function showUser(UserRepository $userRepository, int $id): JsonResponse
+    #[Route("/user/{user_id}", name: "show_user", methods: ["GET"])]
+    public function showUser(UserRepository $userRepository, int $user_id): JsonResponse
     {
-        $findUser = $userRepository->find($id);
+        $findUser = $userRepository->find($user_id);
 
         // check whether user was found 
         if(!$findUser) {
             // if not return error message
-            $message = "User not found with id ".$id;
+            $message = "User not found with id ".$user_id;
             return new JsonResponse(["message" => $message], 200, [], false);
         }
 
@@ -66,10 +68,12 @@ class UsersController extends AbstractController
     /**
      * function to create new user
      * 
-     * @param EntityManagerInterface $entityManager object to saving data into database
+     * @param EntityManagerInterface $entityManager set of methods to operate on object (saving data into database)
+     * @param Request $request set of method for request
      * 
-     * @Route("/user", name="create_user", methods={"POST"})
+     * @return JsonResponse
      */
+    #[Route("/user", name: "create_user", methods: ["POST"])]
     public function createUser(EntityManagerInterface $entityManager, Request $request): JsonResponse 
     {   
         // create try to avoid any exeptions
@@ -109,18 +113,20 @@ class UsersController extends AbstractController
      * edituser() metod to edit user data
      * 
      * @param UserRepository $userRepository set of methods which operate on database
-     * @param int $id user_id
-     * @return JsonResponse
+     * @param EntityManagerInterface $entityManager set of methods to operate on object (saving data into database)
+     * @param Request $request set of method for request
+     * @param int $user_id user_id
      * 
-     * @Route("/user/{id}", name="edit_user", methods={"PATCH"})
+     * @return JsonResponse
      */
-    public function editUser(UserRepository $userRepository, EntityManagerInterface $entityManager, Request $request, int $id): JsonResponse
+    #[Route("/user/{user_id}", name: "edit_user", methods: ["PATCH"])]
+    public function editUser(UserRepository $userRepository, EntityManagerInterface $entityManager, Request $request, int $user_id): JsonResponse
     {
         // try to find user by id
-        $user = $userRepository->find($id);
+        $user = $userRepository->find($user_id);
 
         if(!$user) {
-            $message = "User not found with id ".$id;
+            $message = "User not found with id ".$user_id;
             return new JsonResponse(['message' => $message], 200, [], false);
         }
 
@@ -147,7 +153,7 @@ class UsersController extends AbstractController
             }
         }
         catch(\Exception $e) {
-            $message = "User not found with id ".$id;
+            $message = "User not found with id ".$user_id;
             return new JsonResponse(['message' => $message], 200, [], false);
         }
     }
@@ -156,26 +162,27 @@ class UsersController extends AbstractController
      * function to delete user
      * 
      * @param UserRepository $userRepository set of methods to manipulating data in database
-     * @param int $id user_id which is passed in url /user/7
+     * @param int $user_id user_id which is passed in url /user/7
      * 
-     * @Route("/user/{id}", name="delete_user", methods={"DELETE"})
+     * @return JsonResponse
      */
-    public function deleteUser(UserRepository $userRepository, int $id): JsonResponse 
+    #[Route("/user/{user_id}", name: "delete_user", methods: ["DELETE"])]
+    public function deleteUser(UserRepository $userRepository, int $user_id): JsonResponse 
     {
-        $findUser = $userRepository->find($id);
+        $findUser = $userRepository->find($user_id);
 
         // check whether user was found 
         if(!$findUser) {
             // if not return error message
-            $message = "User not found with id ".$id;
+            $message = "User not found with id ".$user_id;
             return new JsonResponse(["message" => $message], 200, [], false);
         }
 
         // delete user
-        $userRepository->deleteUser($id);
+        $userRepository->deleteUser($user_id);
 
         // return data in JSON format
-        $message = "User have been delete with id ".$id;
+        $message = "User have been delete with id ".$user_id;
         return new JsonResponse(["message" => $message], 200, [], false);
     }
 }
