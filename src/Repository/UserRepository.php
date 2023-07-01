@@ -50,6 +50,18 @@ class UserRepository extends ServiceEntityRepository
         return $stmt->fetchAllAssociative();
     }
 
+    public function findUserByEmailForEdit(string $email, int $user_id): bool
+    {
+        $query = "SELECT * FROM user 
+                WHERE email='{$email}' AND user_id != {$user_id}";
+        $stmt = $this->conn->executeQuery($query);
+
+        if($stmt->rowCount() > 0) {
+            return True;
+        }
+        return False;
+    }
+
     public function deleteUser(int $id): void
     {
         $query = "DELETE FROM user WHERE user_id={$id}";

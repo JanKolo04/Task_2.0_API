@@ -11,7 +11,7 @@ users_list:
     methods: GET
 
 show_user:
-    path: /user/{id}
+    path: /user/{user_id}
     controller: App\Controller\UsersController::showUser
     methods: GET
 
@@ -21,11 +21,11 @@ create_user:
     methods: POST
 
 edit_user:
-    path: /user/{id}
+    path: /user/{user_id}
     controller: App\Controller\UsersController::editUser
-    methods: PATCH
+    methods: PUT
 
 delete_user:
-    path: /user/{id}
+    path: /user/{user_id}
     controller: App\Controller\UsersController::deleteUser
     methods: DELETE
