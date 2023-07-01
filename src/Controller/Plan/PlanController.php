@@ -15,9 +15,11 @@ use Symfony\Component\HttpFoundation\Request;
 class PlanController extends AbstractController
 {
     public $serializer = null;
+    public $entityManager = null;
 
-    public function __construct(SerializerInterface $serializer) {
+    public function __construct(SerializerInterface $serializer, EntityManagerInterface $entityManager) {
         $this->serializer = $serializer;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -27,11 +29,11 @@ class PlanController extends AbstractController
      * 
      * @return JsonResponse
      */
-    #[Route("/plan", name: "plan_list", methods: ["GET"])]
-    public function planList(PlanRepository $planRepository): JsonResponse
+    #[Route("/plan/{user_id}", name: "plan_list", methods: ["GET"])]
+    public function planList(PlanRepository $planRepository, int $user_id): JsonResponse
     {
         // fetch all plans form database
-        $plans = $planRepository->fetchAllPlans();
+        $plans = $planRepository->fetchAllPlans($user_id);
 
         // check whether $plans is empty
         if(!$plans) {
@@ -82,21 +84,36 @@ class PlanController extends AbstractController
      * @return JsonResponse
      */
     #[Route("/plan", name: "create_plan", methods: ["POST"])]
-    public function createPlan(EntityManagerInterface $entityManager): JsonResponse
+    public function createPlan(Request $request): JsonResponse
     {
-        // create object 'Plan' add data
-        $plan = new Plan();
-        $plan->setName('Plan 2');
-        $plan->setBgColor('#FFFFFF');
+        try {
+            $plan = new Plan();
 
-        // manage 'Plan' object
-        $entityManager->persist($plan);
-        // execute 'INSERT' method
-        $entityManager->flush();
+            // create Plan form
+            $form = $this->createForm(PlanType::class, $plan);
+            // handle incomming request
+            $form->handleRequest($request);
+            // submit form
+            // this function is only for test on postman
+            $form->submit($request->request->all());
 
-        // return message
-        $message = "Plan added correcttly with id ".$plan->getPlanId();
-        return new JsonResponse(['message' => $message], 200, [], false);
+            // check whether form is submitted and is valid
+            if($form->isSubmitted() && $form->isValid()) {
+                // tell Doctrine to save Plan
+                $this->entityManager->persist($plan);
+                // run INSERT method
+                $this->entityManager->flush();
+
+                // return plan with new data in JSON format
+                $planJsonFormat = $this->serializer->serialize($plan, 'json');
+                return new JsonResponse($planJsonFormat, 200, [], true);
+            }
+        }
+        catch(\Exception $e) {
+            // return exception message
+            $message = $e->getMessage();
+            return new JsonResponse(["message" => $message], 200, [], false);
+        }
     }
 
     /**
@@ -107,7 +124,7 @@ class PlanController extends AbstractController
      * 
      * @return JsonResponse
      */
-    #[Route("/plan/{plan_id}", name: "edit_plan", methods: ["PATCH"])]
+    #[Route("/plan/{plan_id}", name: "edit_plan", methods: ["PUT"])]
     public function editPlan(EntityManagerInterface $entityManager, PlanRepository $planRepository, Request $request, int $plan_id): JsonResponse
     {
         // find plan by id

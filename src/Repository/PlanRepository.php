@@ -42,9 +42,11 @@ class PlanRepository extends ServiceEntityRepository
         }
     }
 
-    public function fetchAllPlans(): ?array
+    public function fetchAllPlans(int $user_id): ?array
     {   
-        $sql = "SELECT * FROM plan";
+        $sql = "SELECT plan.* FROM user_in_plan 
+                INNER JOIN plan ON user_in_plan.plan_id=plan.plan_id 
+                WHERE user_in_plan.user_id={$user_id}";
         $stmt = $this->conn->executeQuery($sql);
 
         return $stmt->fetchAllAssociative();
