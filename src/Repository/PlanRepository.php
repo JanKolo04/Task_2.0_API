@@ -42,6 +42,17 @@ class PlanRepository extends ServiceEntityRepository
         }
     }
 
+    public function searchUser(int $user_id): bool
+    {
+        $sql = "SELECT * FROM user WHERE user_id={$user_id}";
+        $stmt = $this->conn->executeQuery($sql);
+
+        if($stmt->rowCount() > 0) {
+            return True;
+        }
+        return False;
+    }
+
     public function fetchAllPlans(int $user_id): ?array
     {   
         $sql = "SELECT plan.* FROM user_in_plan 

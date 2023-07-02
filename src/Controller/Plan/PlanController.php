@@ -31,7 +31,13 @@ class PlanController extends AbstractController
      */
     #[Route("/plan/{user_id}", name: "plan_list", methods: ["GET"])]
     public function planList(PlanRepository $planRepository, int $user_id): JsonResponse
-    {
+    {   
+        // check whether user exist
+        if(!$planRepository->searchUser($user_id)) {
+            $message = "User doesn't exist with id ".$user_id;
+            return new JsonResponse(['message' => $message], 200, [], false);
+        }
+
         // fetch all plans form database
         $plans = $planRepository->fetchAllPlans($user_id);
 
