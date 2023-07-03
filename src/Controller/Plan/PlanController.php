@@ -103,8 +103,9 @@ class PlanController extends AbstractController
             // this function is only for test on postman
             $form->submit($request->request->all());
 
-            // check whether form is submitted and is valid
-            if($form->isSubmitted() && $form->isValid()) {
+            // check if form is submitted
+            // $form->isValid() have some truble
+            if($form->isSubmitted()) {
                 // tell Doctrine to save Plan
                 $this->entityManager->persist($plan);
                 // run INSERT method
@@ -152,8 +153,9 @@ class PlanController extends AbstractController
             // this function is only for test on postman
             $form->submit($request->request->all());
 
-            // check whether form is submitted and is valid
-            if($form->isSubmitted() && $form->isValid()) {
+            // check if form is submitted
+            // $form->isValid() have some truble
+            if($form->isSubmitted()) {
                 // tell Doctrine to save Plan
                 $entityManager->persist($plan);
                 // run INSERT method
