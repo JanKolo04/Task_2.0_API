@@ -1,13 +1,14 @@
 <?php
 
-    namespace App\Service\Plan;
+    namespace App\Service;
 
-    use Symfony\Component\HttpFoundation\JsonResponse;
+    use App\Form\Type\PlanType;
     use App\Repository\PlanUsersRepository;
     use App\Repository\PlanRepository;
     use App\Entity\PlanUsers;
+    use App\Entity\Plan;
 
-    class PlanUsersHelper 
+    class PlanHelper
     {   
         public $planRepository = null;
         public $planUsersRepository = null;
@@ -107,5 +108,6 @@
             return $planUsers;
         }
     }
+
 
 ?>

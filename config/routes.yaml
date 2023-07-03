@@ -32,12 +32,12 @@ delete_user:
 
 # plan routes
 plan_list:
-    path: /plan
+    path: /plan/{user_id}
     controller: App\Controller\Plan\PlanController::planList
     methods: GET
 
 show_plan:
-    path: /plan/{id}
+    path: /plan/{plan_id}
     controller: App\Controller\Plan\PlanController::showPlan
     methods: GET
 
@@ -47,12 +47,12 @@ create_plan:
     methods: POST
 
 edit_plan:
-    path: /plan/{id}
+    path: /plan/{plan_id}
     controller: App\Controller\Plan\PlanController::editPlan
-    methods: PATCH
+    methods: PUT
 
 delete_plan:
-    path: /plan/{id}
+    path: /plan/{plan_id}
     controller: App\Controller\Plan\PlanController::deletePlan
     methods: DELETE
 

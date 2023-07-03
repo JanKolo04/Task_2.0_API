@@ -2,7 +2,7 @@
 
     namespace App\Controller\Plan;
 
-    use App\Service\Plan\PlanUsersHelper;
+    use App\Service\PlanHelper;
     use App\Repository\PlanUsersRepository;
     use App\Repository\PlanRepository;
     use Symfony\Component\Routing\Annotation\Route;
@@ -10,7 +10,6 @@
     use Doctrine\ORM\EntityManagerInterface;
     use Symfony\Component\HttpFoundation\JsonResponse;
     use Symfony\Component\Serializer\SerializerInterface;
-    use Symfony\Component\HttpFoundation\Request;
 
     class PlanUsersController extends AbstractController
     {
@@ -27,9 +26,8 @@
          * @param int $plan_id plan id
          * 
          * @return JsonResponse
-         * 
-         * @Route("/plan/{plan_id}/users", name="list_of_users_in_plan", methods={"GET"})
          */
+        #[Route("/plan/{plan_id}/users", name: "list_of_users_in_plan", methods: ["GET"])]
         public function usersList(PlanUsersRepository $planUsersRepository, int $plan_id): JsonResponse
         {
             // fetch all plans form database
@@ -52,20 +50,19 @@
         /**
          * showUser() method to show one user in plan
          * 
-         * @param PlanUsersHelper set of methods to make main code clean
+         * @param PlanHelper set of methods to make main code clean
          * @param int $plan_id plan id
          * @param int $user_id user id
          * 
          * @return JsonResponse
-         * 
-         * @Route("/plan/{plan_id}/users/{user_id}", name="show_user_in_plan", methods={"GET"})
          */
-        public function showUser(PlanUsersHelper $planUsersHelper, int $plan_id, int $user_id): JsonResponse
+        #[Route("/plan/{plan_id}/users/{user_id}", name: "show_user_in_plan", methods: ["GET"])]
+        public function showUser(PlanHelper $planHelper, int $plan_id, int $user_id): JsonResponse
         {   
             // try to find plan with id $plan_id
-            $plan = $planUsersHelper->checkPlanExist($plan_id);
+            $plan = $planHelper->checkPlanExist($plan_id);
             // try to find user with id $user_id
-            $user = $planUsersHelper->checkUserExistInPlan($plan_id, $user_id);
+            $user = $planHelper->checkUserExistInPlan($plan_id, $user_id);
 
             // if an function return string return error message
             if(gettype($plan) == 'string') {
@@ -85,20 +82,19 @@
         /**
          * addUser() method to add user into plan
          * 
-         * @param PlanUsersHelper $planUsersHelper set of methods to make main controller smaller
+         * @param PlanHelper $planHelper set of methods to make main controller smaller
          * @param EntityManagerInterface $entityManager set of methods for entity
          * @param int $plan_id plan id
          * @param int $user_id user id
          * 
          * @return JsonResponse
-         * 
-         * @Route("/plan/{plan_id}/users/{user_id}", name="create_user_plan", methods={"POST"})
          */
-        public function addUser(PlanUsersHelper $planUsersHelper, EntityManagerInterface $entityManager, int $plan_id, int $user_id): JsonResponse
+        #[Route("/plan/{plan_id}/users/{user_id}", name: "create_user_plan", methods: ["POST"])]
+        public function addUser(PlanHelper $planHelper, EntityManagerInterface $entityManager, int $plan_id, int $user_id): JsonResponse
         {
             // run methods to check exist plan and user
-            $checkPlanExist = $planUsersHelper->checkPlanExist($plan_id);
-            $checkUserExist = $planUsersHelper->checkUserExist($user_id);
+            $checkPlanExist = $planHelper->checkPlanExist($plan_id);
+            $checkUserExist = $planHelper->checkUserExist($user_id);
 
             // check whether methods above not returns null
             if(gettype($checkPlanExist) == 'string') {
@@ -109,7 +105,7 @@
             }
 
             // add user into plan
-            $planUsers = $planUsersHelper->addUserIntoPlan($entityManager, $user_id, $plan_id);
+            $planUsers = $planHelper->addUserIntoPlan($entityManager, $user_id, $plan_id);
 
             // parse PlanUsers object into JSON format
             $planUsersJson = $this->serializer->serialize($planUsers, 'json');
@@ -120,21 +116,20 @@
         /**
          * deleteUser() method to delete user from plan
          * 
-         * @param PlanUsersHelper $planUsersHelper set of methods to make main code cleaner
+         * @param PlanHelper $planHelper set of methods to make main code cleaner
          * @param PlaUsersRepository $planUsersRepository set of methods to action with database
          * @param int $plan_id plan id
          * @param int $user_id user id
          * 
          * @return JsonResponse
-         * 
-         * @Route("/plan/{plan_id}/users/{user_id}", name="delete_user_from_plan", methods={"DELETE"})
          */
-        public function deleteUser(PlanUsersHelper $planUsersHelper, PlanUsersRepository $planUsersRepository, int $plan_id, int $user_id): JsonResponse
+        #[Route("/plan/{plan_id}/users/{user_id}", name: "delete_user_from_plan", methods: ["DELETE"])]
+        public function deleteUser(PlanHelper $planHelper, PlanUsersRepository $planUsersRepository, int $plan_id, int $user_id): JsonResponse
         {
             // try to find plan with id $plan_id
-            $plan = $planUsersHelper->checkPlanExist($plan_id);
+            $plan = $planHelper->checkPlanExist($plan_id);
             // try to find user with id $user_id
-            $user = $planUsersHelper->checkUserExistInPlan($plan_id, $user_id);
+            $user = $planHelper->checkUserExistInPlan($plan_id, $user_id);
 
             // if an function return string return error message
             if(gettype($plan) == 'string') {
