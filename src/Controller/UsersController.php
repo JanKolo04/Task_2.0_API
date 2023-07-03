@@ -80,17 +80,19 @@ class UsersController extends AbstractController
             $form->submit($request->request->all());
 
             // check whether user exist with entered email
-            $findUser = $usersHelper->checkUserExistByEmail($form);
+            $findUser = $usersHelper->checkUserExistByEmail($user);
             if($findUser) {
                 return new JsonResponse(["message" => $findUser], 200, [], false);
-            }
+            }        
+
+            $user->setPassword($usersHelper->hashPassword($user));
 
             // check if form have correct data
             if($form->isSubmitted() && $form->isValid()) {
                 // this tell Doctrine to manage with 'User' object
-                $this->entityManager->persist($user);
+                $usersHelper->entityManager->persist($user);
                 // method to execute 'INSERT' method to save data into database
-                $this->entityManager->flush();
+                $usersHelper->entityManager->flush();
 
                 // parse User object into JSON format
                 $jsonData = $usersHelper->serializer->serialize($user, 'json');

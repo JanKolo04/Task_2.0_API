@@ -6,6 +6,7 @@
     use App\Repository\UserRepository;
     use Doctrine\ORM\EntityManagerInterface;
 
+
     class UsersHelper
     {
         public $serializer = null;
@@ -20,10 +21,10 @@
             $this->entityManager = $entityManager;
         }
 
-        public function checkUserExistByEmail(object $form): ?string
+        public function checkUserExistByEmail(object $user): ?string
         {   
             // get email from form
-            $email = $form['email']->getData();
+            $email = $user->getEmail();
             // try to find user by email
             $find = $this->userRepository->findBy(array('email' => $email));
 
@@ -34,6 +35,20 @@
                 return $message;
             }
             return null;
+        }
+
+        public function hashPassword($user): string
+        {
+            // get entered password
+            $passoword = $user->getPassword();
+
+            $options = [
+                'cost' => 12,
+            ];
+            $hashedPassword = password_hash($passoword, PASSWORD_BCRYPT, $options);
+
+            // return hashed password
+            return $hashedPassword;
         }
 
         public function checkUserExistByEmailForEdit(object $form, int $user_id): ?string
